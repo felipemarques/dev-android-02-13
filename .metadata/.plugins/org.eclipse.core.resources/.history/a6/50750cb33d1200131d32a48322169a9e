@@ -1,0 +1,12 @@
+package com.unopar.meucarronovo.modelo;
+
+public class Veiculo {
+	private String _placa;
+	private String _marca;
+	private String _modelo;
+	
+	public Veiculo() {
+		
+	}
+
+}

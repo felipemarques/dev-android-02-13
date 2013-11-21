@@ -1,0 +1,126 @@
+package com.unopar.monitordeservico;
+
+import java.util.TimerTask;
+
+import com.unopar.monitordeservico.data.CentralMonitor;
+import com.unopar.monitordeservico.data.ServicoMonitor;
+import com.unopar.monitordeservico.svc.MonitorService;
+import com.unopar.monitordeservico.task.TaskBase;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+	private CentralMonitor _centralMonitor;
+	private ListView _lsvItens;
+	private TaskBase _taskRefresh;
+	private ServicoMonitorAdapter _adaptador;
+	private MonitorService _service;
+	
+	private ServiceConnection _svcConnection = new ServiceConnection() {		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			_service = null;
+		}
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			_service = ((MonitorService.LocalBinder)service).getService();
+			
+			_centralMonitor = _service.getCentralMonitor();
+			
+			_adaptador = new ServicoMonitorAdapter();	
+			
+			_lsvItens.setAdapter(_adaptador);
+			
+			_taskRefresh.start();
+		}
+	};
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		_lsvItens = (ListView)findViewById(R.id.lsvServicos);
+		
+		_taskRefresh = new TaskBase(
+				new TimerTask() {					
+					@Override
+					public void run() {
+						_centralMonitor.refresh();
+						_adaptador.notifyDataSetChanged();
+					}
+				}, 1000);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		bindService(
+				new Intent(this, MonitorService.class), 
+				_svcConnection, Context.BIND_AUTO_CREATE);
+		
+		if(_service != null) {
+			_taskRefresh.start();
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		
+		unbindService(_svcConnection);
+		
+		_taskRefresh.stop();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+	
+	private class ServicoMonitorAdapter 
+		extends ArrayAdapter<ServicoMonitor> {
+		public ServicoMonitorAdapter() {
+			super(MainActivity.this, 
+					R.layout.servico_status_item,
+					_centralMonitor.get());
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View rowView = getLayoutInflater().
+					inflate(R.layout.servico_status_item, parent, false);
+			
+			TextView txvNome = (TextView)rowView.findViewById(R.id.txvNome);
+			ImageView imvStatus = (ImageView)rowView.findViewById(R.id.imvStatus);
+			
+			ServicoMonitor svm = getItem(position);
+			
+			txvNome.setText(svm.getNome());
+			imvStatus.setImageResource(
+					svm.estaOn() ? R.drawable.img_on : R.drawable.img_off);
+	
+			return rowView;
+		}
+	}
+
+}

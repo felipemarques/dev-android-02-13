@@ -1,0 +1,33 @@
+package com.unopar.meucarronovo.modelo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Veiculo {
+	private String _placa;
+	private String _marca;
+	private String _modelo;
+	
+	public Veiculo(String placa, String marca, String modelo) {
+		_placa = placa;
+		_marca = marca;
+		_modelo = modelo;		
+	}
+	
+	public String getPlaca() {
+		return _placa;
+	}
+	
+	public String getMarca() {
+		return _marca;
+	}
+	
+	public String getModelo() {
+		return _modelo;
+	}
+
+	private static List<Veiculo> _itens;
+	static {
+		_itens = new ArrayList<Veiculo>();
+	}
+}

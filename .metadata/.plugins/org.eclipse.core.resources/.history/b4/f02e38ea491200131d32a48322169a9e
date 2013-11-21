@@ -1,0 +1,55 @@
+package com.unopar.meucarronovo.modelo;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Veiculo implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9168971952574237958L;
+	
+	private String _placa;
+	private String _marca;
+	private String _modelo;
+	
+	public Veiculo(String placa, String marca, String modelo) {
+		_placa = placa;
+		_marca = marca;
+		_modelo = modelo;		
+	}
+	
+	public String getPlaca() {
+		return _placa;
+	}
+	
+	public String getMarca() {
+		return _marca;
+	}
+	
+	public String getModelo() {
+		return _modelo;
+	}
+	
+	@Override
+	public String toString() {	
+		return _placa;
+	}
+
+	private static List<Veiculo> _itens;
+	static {
+		_itens = new ArrayList<Veiculo>();
+		
+		_itens.add(new Veiculo("UNO0001", "GM", "Celta Lt"));
+		_itens.add(new Veiculo("UNO0002", "GM", "Celta Lt"));
+		_itens.add(new Veiculo("UNO0003", "GM", "Celta Lt"));
+		_itens.add(new Veiculo("UNO0004", "GM", "Celta Lt"));
+		_itens.add(new Veiculo("UNO0005", "GM", "Celta Lt"));
+	}
+	
+	public static List<Veiculo> GetAll() {
+		return _itens;
+	}
+}

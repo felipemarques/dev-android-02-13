@@ -1,0 +1,45 @@
+package com.unopar.meucarronovo;
+
+import com.unopar.meucarronovo.modelo.Veiculo;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+public class DetalheVeiculoFragment extends Fragment {
+	public static final String VEICULO_SELECIONADO = "VEICULO_SELECIONADO";
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		
+		return inflater.inflate(R.layout.detalhe_veiculo, container, false);
+	}
+	
+	@Override
+	public void onStart() {		
+		super.onStart();
+		
+		Bundle args = getArguments();
+		
+		if(args != null && args.containsKey(VEICULO_SELECIONADO)) {
+			Veiculo veiculo = (Veiculo) args.getSerializable(VEICULO_SELECIONADO);
+			
+			configUI(veiculo);
+		}
+	}
+
+	public void configUI(Veiculo veiculo) {
+		TextView txvPlaca = (TextView)getActivity().findViewById(R.id.txvPlaca);
+		TextView txvMarca = (TextView)getActivity().findViewById(R.id.txvMarca);
+		TextView txvModelo = (TextView)getActivity().findViewById(R.id.txvModelo);
+	
+		txvPlaca.setText(veiculo.getPlaca());
+		txvMarca.setText(veiculo.getMarca());
+		txvModelo.setText(veiculo.getModelo());
+	}
+
+}

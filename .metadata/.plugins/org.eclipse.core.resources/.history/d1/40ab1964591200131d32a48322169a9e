@@ -1,0 +1,76 @@
+package com.unopar.meucarronovo;
+
+import com.unopar.meucarronovo.modelo.Veiculo;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+
+public class MainActivity extends FragmentActivity 
+	implements ListaVeiculosFragment.ActivityContainer {
+	
+	private boolean _inLargeLayout;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		_inLargeLayout = findViewById(R.id.fragment_single) == null;
+		
+		if(savedInstanceState != null)
+		{
+			return;
+		}
+		
+		if(!_inLargeLayout) {
+			ListaVeiculosFragment listaFragment = new ListaVeiculosFragment();
+			
+			getSupportFragmentManager()
+				.beginTransaction()
+				.add(R.id.fragment_single, listaFragment)
+				.commit();
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public void notifyItemSelected(Veiculo veiculo) {
+		DetalheVeiculoFragment detalheFragment;
+		
+		if(_inLargeLayout) {
+			detalheFragment = (DetalheVeiculoFragment)
+					getSupportFragmentManager()
+					.findFragmentById(R.id.fragment_detail);
+			detalheFragment.updateUI(veiculo)ç
+			
+		} else {
+			Bundle params = new Bundle();
+			params.putSerializable(
+					DetalheVeiculoFragment.VEICULO_SELECIONADO, 
+					veiculo);
+			
+			detalheFragment = new DetalheVeiculoFragment();
+			detalheFragment.setArguments(params);
+			
+			FragmentTransaction transaction = getSupportFragmentManager()
+					.beginTransaction();
+			
+			transaction.replace(R.id.fragment_single, detalheFragment);
+			transaction.addToBackStack(null);
+			
+			transaction.commit();	
+			
+		}
+		
+	}
+
+}

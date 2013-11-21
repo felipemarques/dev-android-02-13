@@ -1,0 +1,32 @@
+package com.unopar.meucarronovo;
+
+import com.unopar.meucarronovo.modelo.Veiculo;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class DetalheVeiculoFragment extends Fragment {
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		
+		return inflater.inflate(R.layout.detalhe_veiculo, container, false);
+	}
+	
+	@Override
+	public void onStart() {		
+		super.onStart();
+		
+		Bundle args = getArguments();
+		
+		if(args != null && args.containsKey("VEICULO_SELECIONADO")) {
+			Veiculo veiculo = args.getSerializable("VEICULO_SELECIONADO");
+			
+			configUI(veiculo);
+		}
+	}
+
+}
